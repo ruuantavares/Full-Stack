@@ -4,7 +4,7 @@ import './style.css'
 export default function Header() {
     return (
         <header>
-            <h1>Rick and Morty API</h1>
+            <h1>Lista de Usuários</h1>
             <nav>
                 <Link to='/'>
                     <button>
@@ -13,7 +13,7 @@ export default function Header() {
                 </Link>
                 <Link to='/Users'>
                     <button>
-                        API
+                        Usuários
                     </button>
                 </Link>
             </nav>

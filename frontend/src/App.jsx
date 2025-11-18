@@ -4,6 +4,7 @@ import Footer from './components/Footer'
 import { Route, Routes } from 'react-router-dom'
 import Users from './pages/Users'
 import Home from './pages/Home'
+import CreateUser from './pages/Users/create'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/Users' element={<Users/>} />
+        <Route path='/create/user' element={<CreateUser/>} />
       </Routes>
       <Footer />
     </>

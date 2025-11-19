@@ -6,23 +6,22 @@ class User {
             id: {
                 type: database.db.Sequelize.INTEGER,
                 primaryKey: true,
-                autoIncrement: true 
+                autoIncrement: true
             },
             nome: {
-                type: database.db.Sequelize.STRING,
+                type: database.db.Sequelize.STRING
             },
             email: {
-                type: database.db.Sequelize.STRING,
-                unique: true,
+                type: database.db.Sequelize.STRING
             },
-
             senha: {
-                type: database.db.Sequelize.STRING,
+                type: database.db.Sequelize.STRING
             },
             ativo: {
-                type: database.db.Sequelize.STRING,
+                type: database.db.Sequelize.BOOLEAN
             },
             permissao: {
+                // recomendo usar ENUM
                 type: database.db.Sequelize.INTEGER
             }
         })

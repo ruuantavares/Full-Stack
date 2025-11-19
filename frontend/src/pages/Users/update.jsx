@@ -1,19 +1,20 @@
-import { useState } from "react"
-import { createUser } from "../../api/users";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { updateUser } from "../../api/users";
+import { useLocation, useNavigate } from "react-router-dom";
 import './styles.css'
 import { toast } from "react-toastify";
 
-const INITIAL_STATE = {
-    nome: '',
-    email: '',
-    senha: '',
-    ativo: true
-}
-
-export default function CreateUser() {
+export default function UpdateUser() {
     const navigate = useNavigate()
-    const [user, setUser] = useState(INITIAL_STATE)
+    const [user, setUser] = useState({
+        nome: '',
+        email: '',
+        senha: '',
+        ativo: true
+    })
+    // adicionar userLocation novo para pegar o state passado anteriormente
+    const location = useLocation()
+    const { user: prevUser } = location.state
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -25,22 +26,28 @@ export default function CreateUser() {
 
     const handleReset = (e) => {
         e.preventDefault()
-        setUser(INITIAL_STATE)
+        // alterado do init para o prev
+        setUser({ ...prevUser, senha: '' })
     }
 
     const handleSave = async (e) => {
         e.preventDefault()
-        // seria idela validar os valores do objeto antes de enviar
-        const response = await createUser(user)
+        // Alterada função pra update
+        const response = await updateUser(prevUser.id, user)
 
-        if (response.status === 201) {
-            toast("Usuário criado com sucesso")
+        if (response.status === 200) {
             navigate('/users')
+            toast("Usuário alterado com sucesso")
         } else {
             toast("Erro ao criar Usuário")
             console.log(response)
         }
     }
+
+    // Adicionado
+    useEffect(() => {
+        setUser({ ...prevUser, senha: '' })
+    }, [])
 
     return (
         <div className="form">

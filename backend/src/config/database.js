@@ -1,14 +1,14 @@
 import { Sequelize } from 'sequelize'
 
-class database {
+class Database {
     constructor() {
         this.init()
     }
 
-
     init() {
+        // .env - dotenv
         this.db = new Sequelize({
-            database: "exemplo",
+            database: 'exemplo',
             host: 'localhost',
             username: 'root',
             password: '',
@@ -17,4 +17,4 @@ class database {
     }
 }
 
-export default new database
+export default new Database()

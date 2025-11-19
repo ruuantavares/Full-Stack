@@ -1,105 +1,84 @@
-import User from "../model/users.js";
-import jwt from "jsonwebtoken";
+import User from '../model/users.js'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
-
-const JWT_SEGREDO = "M3uS3GR3D0";
-const SALT = 10
-
+const JWT_SEGREDO = "M3uS3gr3d0"
+const SALT = 10 // 12
 
 class ServiceUser {
-  async FindAll() {
-    return User.findAll();
-  }
 
-  async FindOne(id) {
-    //verificar se o index é valido e se for um numero. verificar se ele for menor q o .lenth
-    if (!id) {
-      throw new Error("Favor informar um ID");
+    async FindAll() {
+        return User.findAll()
     }
 
-    const user = await User.findByPk(id);
+    async FindOne(id) {
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
 
-    if (!user) {
-      throw new Error(`Usuario ${id} não encontrado`);
+        // preciso procurar um usuario no banco
+        const user = await User.findByPk(id)
+
+        if (!user) {
+            throw new Error(`Usuário ${id} não encontrado`)
+        }
+
+        return user
     }
 
-    return user;
-  }
+    async Create(nome, email, senha, ativo, permissao) {
+        if (!nome || !email || !senha) {
+            throw new Error("favor preencher todos os campos")
+        }
 
-  async Create(nome, email, senha, ativo, permissao) {
-    //verificar se o nome é valido
-    if (!nome || !email || !senha) {
-      throw new Error("Favor preencher todos os campos");
+        const senhaCrip = await bcrypt.hash(String(senha), SALT)
+
+        await User.create({
+            nome,
+            email,
+            senha: senhaCrip,
+            ativo,
+            permissao
+        })
     }
 
-    const senhaCriptografada = await bcrypt.hash(String(senha), SALT)
+    async Update(id, nome, senha) {
+        const oldUser = await User.findByPk(id)
+        // oldUser.nome = nome || oldUser.nome
 
-    await User.create({
-      nome,
-      email,
-      senha: senhaCriptografada,
-      ativo,
-      permissao
-    });
-  }
+        oldUser.senha = senha
+            ? await bcrypt.hash(String(senha), SALT)
+            : oldUser.senha
 
-  async Update(id, nome, email, senha, ativo) {
-    //verificar se o indexe o nome sao validos e se for um numero. verificar se ele for menor q o .lenth
-    if (!id || !nome || !email || !senha) {
-      throw new Error("Favor informar um ID");
+        // User.Update(id, nome)
     }
 
-    const oldUser = await User.findByPk(id);
+    async Delete(id) {
+        const oldUser = await User.findByPk(id)
 
-    if (!oldUser) {
-      throw new Error(`Usuario ${id} não encontrado`);
+        oldUser.destroy()
     }
 
-    oldUser.nome = nome
-    oldUser.email = email
-    oldUser.senha = senha
-      ? await bcrypt.hash(String(senha), SALT)
-      : oldUser.senha 
+    async Login(email, senha) {
+        if(!email || !senha) {
+            throw new Error("Email ou senha inválidos.")
+        }
 
+        const user = await User.findOne({ where: { email } })
 
-    return oldUser.save();
-  }
+        if (
+            !user
+            || !(await bcrypt.compare(String(senha), user.senha))
+        ) {
+            throw new Error("Email ou senha inválidos.")
+        }
 
-  async Delete(id) {
-    //verificar se o index e o nome sao validos e se for um numero. verificar se ele for menor q o .lenth
-    if (!id) {
-      throw new Error("Favor informar um ID");
+        return jwt.sign(
+            { id: user.id, nome: user.nome, permissao: user.permissao },
+            JWT_SEGREDO,
+            { expiresIn: 60 * 60 }
+        )
     }
-
-    const user = await User.findByPk(id);
-
-    if (!user) {
-      throw new Error(`Usuario ${id} não encontrado`);
-    }
-
-    return user.destroy();
-  }
-
-  async Login(email, senha) {
-    if (!email || !senha) {
-      throw new Error("Email ou senha inválidos.");
-    }
-    const user = await User.findOne({ where: { email } });
-    if (!user 
-      || !(await bcrypt.compare(String(senha), user.senha ))
-    ) {
-      throw new Error("Email ou senha inválidos.");
-    }
-
-    //criar o token
-    return jwt.sign({ 
-        id: user.id,
-         nome: user.nome, permissao: User.permissao },
-          JWT_SEGREDO, 
-          { expiresIn: 60 * 60,
-    });
-  }
 }
 
-export default new ServiceUser();
+export default new ServiceUser()

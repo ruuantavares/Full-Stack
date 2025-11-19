@@ -1,10 +1,9 @@
-import express from "express"
-import ControllerUser from "../controller/users.js"
-// import authMiddleware from "../middleware/auth.js"
+import express from 'express'
+import ControllerUser from '../controller/users.js'
+import authMiddleware from '../middleware/auth.js'
 
 const router = express.Router()
 
-//  api/v1
 router.post('/login', ControllerUser.Login)
 
 router.get('/user/context', ControllerUser.FindOne)

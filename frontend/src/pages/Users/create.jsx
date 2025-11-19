@@ -2,14 +2,16 @@ import { useState } from "react";
 import { createUser } from "../../api/users";
 import { useNavigate } from "react-router-dom";
 
+const INITIAL_STATE = {
+  nome: "",
+  email: "",
+  senha: "",
+  ativo: true,
+};
+
 export default function CreateUser() {
   const Navigate = useNavigate();
-  const [user, setUser] = useState({
-    nome: "",
-    email: "",
-    senha: "",
-    ativo: true,
-  });
+  const [user, setUser] = useState(INITIAL_STATE);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -17,6 +19,11 @@ export default function CreateUser() {
       ...user,
       [id]: value,
     });
+  };
+
+  const handleReset = (e) => {
+    e.preventDefault();
+    setUser(INITIAL_STATE);
   };
 
   const handleSave = async (e) => {
@@ -33,6 +40,7 @@ export default function CreateUser() {
 
   return (
     <main>
+      <div className="form">
       <form>
         <div>
           <label>Nome: </label>
@@ -64,11 +72,14 @@ export default function CreateUser() {
             onChange={handleChange}
           />
         </div>
-        <button type="reset">Limpar</button>
+        <button type="reset" onClick={handleReset}>
+          Limpar
+        </button>
         <button type="submit" onClick={handleSave}>
-          Enviar
+          Criar
         </button>
       </form>
+      </div>
     </main>
   );
 }

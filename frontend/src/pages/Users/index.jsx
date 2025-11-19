@@ -1,47 +1,61 @@
 import { useEffect, useState } from "react";
-import { getUsers } from "../../api/users";
+import { deleteUser, getUsers } from "../../api/users";
 import { Link } from "react-router-dom";
-
+import "./styles.css";
+import { toast } from "react-toastify";
 
 function Users() {
-  const [conteudo, setConteudo] = useState(<>Carregando</>);
+  const [users, setUsers] = useState([]);
 
-  async function TranformaEmLista() {
-    const todosUsuarios = await getUsers();
+  const handleDelete = async (id) => {
+    const response = await deleteUser(id);
 
-    return todosUsuarios.map((user) => (
-      <div className="user" key={user.id}>
-        <label >{user.name}</label>
-        <label >{user.email}</label>
-        <div className="actions">
-            <button>Alterar</button>
-            <button>Deletar</button>
-        </div>
-      </div>
-    ));
-  }
+    if (response.status !== 204) {
+      toast("Erro ao deletar usuário");
+      return;
+    }
+    setUsers((users) => users.filter((user) => user.id !== id));
+  };
 
   useEffect(() => {
     async function carregar() {
-      setConteudo(await TranformaEmLista());
+      const allUsers = await getUsers();
+      setUsers(allUsers);
     }
     carregar();
   }, []);
 
   return (
     <main>
-      {/* Filtros */}
       <div className="user-list">
         <Link to={"/create/user"}>
-        <button>Criar</button>
+          <button>Criar</button>
         </Link>
         <div className="user header" key="header">
-            <label>Nome</label>
-            <label>Email</label>
-            <label>Ações</label>
+          <label>Nome</label>
+          <label>Email</label>
+          <label>Ações</label>
         </div>
-        {conteudo}
-        </div>
+
+        {users.length === 0 ? (
+          <div className="user">
+            <label>Não HAVE ninguém</label>
+          </div>
+        ) : (
+          users.map((user) => (
+            <div className="user" key={user.id}>
+              <label>{user.nome}</label>
+              <label>{user.email}</label>
+              <div className="actions">
+                <button type="button">Alterar</button>
+                <button type="button" onClick={() => handleDelete(user.id)}>
+                  Deletar
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </main>
   );
 }

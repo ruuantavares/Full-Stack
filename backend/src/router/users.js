@@ -1,20 +1,20 @@
-import express from 'express'
-import ControllerUser from '../controller/users.js'
-import authMiddleware from '../middleware/auth.js'
+import express from "express";
+import ControllerUser from "../controller/users.js";
+import authMiddleware from "../middleware/auth.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.post('/login', ControllerUser.Login)
+router.post("/login", ControllerUser.Login);
 
-router.get('/user/context', ControllerUser.FindOne)
-router.post('/user/', ControllerUser.Create)
-router.put('/user/', ControllerUser.Update)
-router.delete('/user/', ControllerUser.Delete)
+router.get("/user/context", authMiddleware(), ControllerUser.FindOne);
+router.post("/user/", ControllerUser.Create);
+router.put("/user/", authMiddleware(), ControllerUser.Update);
+router.delete("/user/", authMiddleware(), ControllerUser.Delete);
 
-router.get('/users', authMiddleware().ControllerUser.FindAll)
-router.get('/user/:id', ControllerUser.FindOne)
-router.post('/user/admin', ControllerUser.Create)
-router.put('/user/:id', ControllerUser.Update)
-router.delete('/user/:id', ControllerUser.Delete)
+router.get("/users", authMiddleware(), ControllerUser.FindAll);
+router.get("/user/:id", authMiddleware(), ControllerUser.FindOne);
+router.post("/user/admin", authMiddleware(), ControllerUser.Create);
+router.put("/user/:id", authMiddleware(), ControllerUser.Update);
+router.delete("/user/:id", authMiddleware(), ControllerUser.Delete);
 
-export default router
+export default router;

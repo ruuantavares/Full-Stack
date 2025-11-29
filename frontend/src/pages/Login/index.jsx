@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/users";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../auth/Context";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const { login } = useContext(AuthContext);
@@ -22,9 +23,9 @@ export default function Login() {
       const response = await loginUser(email, senha);
       console.log();
       login(response.data.token);
-      navigate('/users')
+      navigate("/users");
     } catch (error) {
-      toast("Email ou senha inválidos");
+      toast("Email ou senha inválidos" + error);
     }
   };
 
@@ -53,7 +54,10 @@ export default function Login() {
           />
         </div>
         <p>
-          Não possui conta? <spam className="signup">Cadastre-se</spam>
+          Não possui conta?
+          <Link to="/create/user">
+            <button className="signup">Cadastre-se</button>
+          </Link>
         </p>
         <button className="button" type="submit" onClick={handleLogin}>
           Entrar

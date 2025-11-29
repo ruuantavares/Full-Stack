@@ -6,10 +6,13 @@ import database from './config/database.js'
 const app = express();
 
 app.use(express.json())
-app.use(cors())
-
+app.use(cors({
+  origin: 'http://localhost:5173', // allow your frontend origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true // if you use cookies/auth headers
+}));
 app.use('/api/v1', router)
-const port = 3000 // ou 3001 ou 9090 ou 9091 ou 9000
+const port = 5432 // ou 3001 ou 9090 ou 9091 ou 9000
 
 database.db
     .sync({ force: false })
